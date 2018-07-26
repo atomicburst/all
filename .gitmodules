@@ -1,0 +1,6 @@
+[submodule "packages/Web.Datatable"]
+	path = packages/Web.Datatable
+	url = https://github.com/atomicburst/Web.Datatable.git
+[submodule "packages/Web.Datatable.Addons"]
+	path = packages/Web.Datatable.Addons
+	url = https://github.com/atomicburst/Web.Datatable.Addons.git

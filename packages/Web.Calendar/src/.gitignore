@@ -1,0 +1,6 @@
+*.js
+**/*.js
+*.css
+**/*.css
+*.js.map
+**/*.js.map
