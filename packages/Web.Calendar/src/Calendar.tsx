@@ -77,7 +77,7 @@ export class CalendarRef extends Component<CalendarProps & WithStoreView & WithS
         super(props, context);
         let me = this;
         const  { dateStart , dateEnd } = me.getInterval();
-        me.storeView.configDefaultViewData( { dateStart , dateEnd });
+        me.storeView.configureStoreViewProps( { dateStart , dateEnd });
     }
 
     readRemote(dateStart,dateEnd) {
@@ -127,7 +127,7 @@ export class CalendarRef extends Component<CalendarProps & WithStoreView & WithS
     search() {
         let me = this;
         const  { dateStart , dateEnd } = this.getInterval();
-        me.storeView.configDefaultViewData( { dateStart , dateEnd });
+        me.storeView.configureStoreViewProps( { dateStart , dateEnd });
         me.prom = me.readRemote(dateStart,dateEnd);
     }
 

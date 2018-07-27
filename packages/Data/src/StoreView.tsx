@@ -195,6 +195,7 @@ export class StoreViewRef<T1 extends StoreViewProps=StoreViewProps>  extends Rea
                 length: r.length||items.length,
                 items: items,
                 loading:false,
+                sorts:sorts,
                 offset:c.offset,
                 limit:c.limit
             });
@@ -232,7 +233,7 @@ export class StoreViewRef<T1 extends StoreViewProps=StoreViewProps>  extends Rea
 }
 export interface  WithStoreView  {
    storeView:{
-       configDefaultViewData:(d)=>void;
+       configureStoreViewProps:(d)=>void;
        limit:number
        offset:number
        loading:boolean
@@ -260,11 +261,12 @@ export  const  withStoreView = ()=>{
                         limit:me.limit,
                         offset:me.offset,
                         length:me.length,
+                        sorts:me.sorts,
                         loading:me.loading,
                         read:(c)=>me.read(c),
                         sortFromIndex:(index)=>me.sortFromIndex(index),
                         update:(rs,c)=>me.update(rs,c),
-                        configDefaultViewData:(d)=>this.defaultViewData =d
+                        configureStoreViewProps:(b ,callback?)=>me.configureStoreViewProps(b,callback)
                     }}
                     {...storeProps}>
                 </Type>

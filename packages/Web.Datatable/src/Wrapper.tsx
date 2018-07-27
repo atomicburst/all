@@ -20,6 +20,7 @@ export const WrapperStyles: any = theme => ({
             '&:hover': {
                 color: 'rgba(0, 0, 0, 1)',
             },
+            fontFamily: 'normal normal 300 normal 13px/19px Open Sans,Helvetica Neue,helvetica,arial,verdana,sans-serif',
             cursor: 'default',
             '&:has(.EMPTY)': {
 
@@ -39,8 +40,7 @@ export const WrapperStyles: any = theme => ({
         '& *, & :before, & :after': {
             '-webkit-box-sizing': 'border-box',
             '-moz-box-sizing': 'border-box',
-            boxSizing: 'border-box',
-            font: 'normal normal 300 normal 13px/19px Open Sans,Helvetica Neue,helvetica,arial,verdana,sans-serif'
+            boxSizing: 'border-box'
         },
         '& .react-grid-Header': {
             boxShadow: '0px 0px 4px 0px #dddddd',
@@ -63,6 +63,8 @@ export const WrapperStyles: any = theme => ({
             userSelect: 'none',
             background: '#f9f9f9',
             padding: '8px',
+            fontWeight:'normal',
+            fontFamily: 'normal normal 300 normal 13px/19px Open Sans,Helvetica Neue,helvetica,arial,verdana,sans-serif',
             color: 'rgba(0, 0, 0, 0.75)',
             '&:hover': {
                 color: 'rgba(0, 0, 0, 1)',
@@ -189,31 +191,8 @@ class WrapperRef extends React.Component<{
                 width: c.width,
                 draggable: c.draggable,
                 resizable: c.resizable,
-                sortable: false,
-                headerRenderer: ((column) => (props) => {
-                    let active = false;
-                    let direction ;
-                    let key =column.dataIndex;
-                    for ( let sort of  sorts){
-                        if (sort[key]){
-                            direction=sort[key]
-                        }else {
-                            active = true;
-                        }
-                    }
-                    return <TableSortLabel
-                        active={active }
-                        direction={ direction }
-                        onClick={()=>{
-                            console.log(key)
-                        }}
-                        // active={datatableRef.sortFromIndex(column.dataIndex) ? !!datatableRef.sortFromIndex(column.dataIndex) : false}
-                        // direction={datatableRef.sortFromIndex(column.dataIndex) as any}
-                        // onClick={() => datatableRef.sortHandler(column.dataIndex)}
-                    >
-                        {c.head}
-                    </TableSortLabel>
-                })(c),
+                sortable:  c.sortable,
+                name:  c.head,
                 formatter: function (props) {
                     if (props.value) {
                         return c.cell(props.value, {})
@@ -399,6 +378,19 @@ class WrapperRef extends React.Component<{
         if (mode=='pagination'){
             len=storeView.items.length;
         }
+        let sortDirection;
+        let sortColumn;
+        if (storeView.sorts&&storeView.sorts[0]){
+            for (let ii in  storeView.sorts[0]){
+                if (storeView.sorts[0][ii]){
+                    sortDirection= storeView.sorts[0][ii].toUpperCase()
+                }else {
+                    sortDirection= 'NONE';
+                }
+
+                sortColumn=ii
+            }
+        }
 
         return <div className={classes.datatable} style={{flexGrow: 1, position: 'relative' ,display:'flex',flexDirection: "column"}}>
             <div ref={loadingRef} hidden={!loading} style={{
@@ -428,6 +420,8 @@ class WrapperRef extends React.Component<{
                             columns: columns
                         });
                     }}
+                    sortDirection={sortDirection}
+                    sortColumn={sortColumn}
                     onGridSort={(sortColumn, sortDirection) => this.handleGridSort(sortColumn, sortDirection)}
                     minHeight={minHeight}
                     rowHeight={rowHeight}
