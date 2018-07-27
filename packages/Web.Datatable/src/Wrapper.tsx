@@ -20,7 +20,9 @@ export const WrapperStyles: any = theme => ({
             '&:hover': {
                 color: 'rgba(0, 0, 0, 1)',
             },
-            fontFamily: 'normal normal 300 normal 13px/19px Open Sans,Helvetica Neue,helvetica,arial,verdana,sans-serif',
+            fontWeight:'normal',
+            fontSize:'13px',
+            fontFamily: 'Open Sans,Helvetica Neue,helvetica,arial,verdana,sans-serif',
             cursor: 'default',
             '&:has(.EMPTY)': {
 
@@ -64,7 +66,8 @@ export const WrapperStyles: any = theme => ({
             background: '#f9f9f9',
             padding: '8px',
             fontWeight:'normal',
-            fontFamily: 'normal normal 300 normal 13px/19px Open Sans,Helvetica Neue,helvetica,arial,verdana,sans-serif',
+            fontSize:'13px',
+            fontFamily: 'Open Sans,Helvetica Neue,helvetica,arial,verdana,sans-serif',
             color: 'rgba(0, 0, 0, 0.75)',
             '&:hover': {
                 color: 'rgba(0, 0, 0, 1)',
@@ -167,6 +170,7 @@ class WrapperRef extends React.Component<{
     classes: any,
     loading: any,
     storeView: any,
+    width: any,
     rowHeight: any,
     mode:'infinitescroll'|'pagination'|'list'
     minHeight: any,
@@ -184,11 +188,20 @@ class WrapperRef extends React.Component<{
 
     buildState(props) {
         let _columns = [];
-        let sorts = props.sorts||[];
+        let tw=0;
+        let m=1;
+        for (let c of  props.columns) {
+            if (!c.hidden){
+                tw += c.width||100;
+            }
+        }
+        if (tw<(props.width-35)){
+            m= (props.width-35)/tw;
+        }
         for (let c of  props.columns) {
             _columns.push({
                 key: c.dataIndex,
-                width: c.width,
+                width: (c.width*m)||(100*m),
                 draggable: c.draggable,
                 resizable: c.resizable,
                 sortable:  c.sortable,
@@ -345,13 +358,13 @@ class WrapperRef extends React.Component<{
         const {
             storeView
         } = this.props;
-        if (sortDirection) {
+        if (sortDirection&&sortDirection!="NONE") {
 
             let b = {};
-            b[sortColumn] = sortDirection;
+            b[sortColumn] = sortDirection.toLowerCase();
             storeView.read({offset: storeView.offset, sorts: [b]})
         } else {
-            storeView.read({offset: storeView.offset})
+            storeView.read({offset: storeView.offset, sorts: []})
         }
 
     }

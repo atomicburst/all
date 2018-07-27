@@ -41,13 +41,12 @@ export const DatatableStyles: any = theme => ({
 });
 export interface DatatableProps {
     className?: string;
-    style?: CSSProperties;
     mode:'infinitescroll'|'pagination'|'list'
     onClickItem?: (record: Record) => void
     columns: {
         dataIndex: string,
         head: ReactNode,
-        width?: number,
+        width: number,
         draggable?: boolean,
         resizable?: boolean
         sortable?: boolean,
@@ -106,6 +105,7 @@ export class DatatableRef extends React.Component<WithStyles<typeof DatatableSty
                                             storeView={me.storeView}
                                             loading={me.storeView.loading}
                                             minHeight={size.height}
+                                            width={size.width}
                                             headerRowHeight={me.headerRowHeight}
                                         />
                                     }
