@@ -19,52 +19,50 @@ export interface ViewDataReadConfig {
 }
 let id = 1000;
 
-export  interface StoreViewProps {
-    storeViewProps:{
+export  interface RecordViewProps {
+    recordViewProps:{
         read:(config:ViewDataReadConfig)=>Promise<ViewDataProxyData>
         update?:(config:ViewDataUpdateConfig)=>Promise<any>
         limit?:number
         mapItems?:any
         multSort?:boolean,
         sorts?:{[dataIndex:string]:'desc'|'asc'}[]
-        loadAfterUpdate?:boolean
+        loadAfterUpdate?:boolean,
+        loadVersion:number
+
     }
-    storeViewRef?:(e:StoreViewRef)=>void
 }
 
-export class StoreViewRef<T1 extends StoreViewProps=StoreViewProps>  extends React.Component<T1,any>  {
+export class RecordViewRef<T1 extends RecordViewProps=RecordViewProps>  extends React.Component<T1,any>  {
     constructor(props,context){
         super(props,context);
         this.state={
-            storeViewProps:{
+            recordViewProps:{
                 length:0,
-                ...props.storeViewProps
+                ...props.recordViewProps
             }
         };
-        if ( this.props.storeViewRef){
-            this.props.storeViewRef(this);
-        }
     }
     get length(){
-        return this.storeViewProps.length||0
+        return this.recordViewProps.length||0
     }
     get offset(){
-        return this.storeViewProps.offset||0
+        return this.recordViewProps.offset||0
     }
     get limit(){
-        return this.storeViewProps.limit||35
+        return this.recordViewProps.limit||35
     }
     get mapItems(){
-        return this.storeViewProps.mapItems
+        return this.recordViewProps.mapItems
     }
     get multSort(){
-        return this.storeViewProps.multSort
+        return this.recordViewProps.multSort
     }
     get sorts(){
-        return this.storeViewProps.sorts||[];
+        return this.recordViewProps.sorts||[];
     }
-    get storeViewProps (){
-        return this.state.storeViewProps;
+    get recordViewProps (){
+        return this.state.recordViewProps;
     }
 
     sortFromIndex(dataIndex: string) {
@@ -77,45 +75,12 @@ export class StoreViewRef<T1 extends StoreViewProps=StoreViewProps>  extends Rea
         return ;
     }
 
-
-    //
-    // sortToggleFromIndex(dataIndex: string) {
-    //     let sorts =[]
-    //     let me = this;
-    //     let b=true;
-    //     for(let ii of this.sorts){
-    //         for (let  k in  ii){
-    //             let i2={};
-    //             if (k==dataIndex){
-    //                 b=false;
-    //                 if (ii[k]=='asc'){
-    //                     i2[k]='desc'
-    //                 }else if (ii[k]=='desc'){
-    //                     i2[k]=undefined
-    //                 }else {
-    //                     i2[k]='asc'
-    //                 }
-    //                 sorts.push(i2)
-    //             }else {
-    //                 if (me.multSort){
-    //                     sorts.push(ii)
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     if (b){
-    //         let o ={};
-    //         o[dataIndex]='asc';
-    //         sorts.push(o)
-    //     }
-    // }
-
     get loading (){
-        return this.storeViewProps.loading;
+        return this.recordViewProps.loading;
     }
     get items (){
-        if (this.storeViewProps.items&&this.storeViewProps.items.length){
-            return  this.storeViewProps.items;
+        if (this.recordViewProps.items&&this.recordViewProps.items.length){
+            return  this.recordViewProps.items;
         }
         return []
     }
@@ -126,8 +91,8 @@ export class StoreViewRef<T1 extends StoreViewProps=StoreViewProps>  extends Rea
             ...(c.viewData||{})
         }
 
-        return this.props.storeViewProps.update({items:items,viewData:viewData}).then(function (r) {
-            if (me.props.storeViewProps.loadAfterUpdate){
+        return this.props.recordViewProps.update({items:items,viewData:viewData}).then(function (r) {
+            if (me.props.recordViewProps.loadAfterUpdate){
                 return me.load();
             }else {
                 return  Promise.resolve();
@@ -141,15 +106,15 @@ export class StoreViewRef<T1 extends StoreViewProps=StoreViewProps>  extends Rea
     }
     clear(){
         let me = this;
-        me.configureStoreViewProps({
+        me.configureRecordViewProps({
             items:[]
         })
     }
-    configureStoreViewProps(b ,callback?){
+    configureRecordViewProps(b ,callback?){
         let me = this;
         let ff = {
-            storeViewProps:{
-                ...me.state.storeViewProps,
+            recordViewProps:{
+                ...me.state.recordViewProps,
                 ...b
             }
         }
@@ -185,13 +150,13 @@ export class StoreViewRef<T1 extends StoreViewProps=StoreViewProps>  extends Rea
             me.lastConfig=null;
         }
         me.lastConfig = c;
-        me.configureStoreViewProps({...config,viewData:c.viewData,loading:true});
-        return this.props.storeViewProps.read(c).then(function (r) {
+        me.configureRecordViewProps({...config,viewData:c.viewData,loading:true});
+        return this.props.recordViewProps.read(c).then(function (r) {
             let items = r.items||[];
             if (me.mapItems){
                 items =  items.map(me.mapItems);
             }
-            me.configureStoreViewProps({
+            me.configureRecordViewProps({
                 length: r.length||items.length,
                 items: items,
                 loading:false,
@@ -202,7 +167,7 @@ export class StoreViewRef<T1 extends StoreViewProps=StoreViewProps>  extends Rea
             return  Promise.resolve()
         }).catch(function () {
             if (me.lastConfig==c){
-                me.configureStoreViewProps({
+                me.configureRecordViewProps({
                     loading:false
                 });
             }
@@ -217,23 +182,23 @@ export class StoreViewRef<T1 extends StoreViewProps=StoreViewProps>  extends Rea
         let props = this.props as any;
         let nextProps = _nextProps as any;
         let b =false;
-        if (props.storeViewProps.limit!=nextProps.storeViewProps.limit){
+        if (props.recordViewProps.limit!=nextProps.recordViewProps.limit){
             b = true;
         }
-        if (props.storeViewProps.sorts!=nextProps.storeViewProps.sorts){
+        if (props.recordViewProps.sorts!=nextProps.recordViewProps.sorts){
             b = true;
         }
-        if (props.storeViewProps.loadAfterUpdate!=nextProps.storeViewProps.loadAfterUpdate){
+        if (props.recordViewProps.loadAfterUpdate!=nextProps.recordViewProps.loadAfterUpdate){
             b = true;
         }
         if (b) {
-            me.configureStoreViewProps(nextProps.storeViewProps);
+            me.configureRecordViewProps(nextProps.recordViewProps);
         }
     }
 }
-export interface  WithStoreView  {
-   storeView:{
-       configureStoreViewProps:(d)=>void;
+export interface  WithRecordView  {
+   recordView:{
+       configureRecordViewProps:(d)=>void;
        limit:number
        offset:number
        loading:boolean
@@ -246,17 +211,17 @@ export interface  WithStoreView  {
 }
 
 
-export  const  withStoreView = ()=>{
-    return function<T1 extends StoreViewProps>(Type:React.ComponentClass<T1 & WithStoreView>) {
-        return class extends StoreViewRef<T1> {
+export  const  withRecordView = ()=>{
+    return function<T1 extends RecordViewProps>(Type:React.ComponentClass<T1 & WithRecordView>) {
+        return class extends RecordViewRef<T1> {
             render(){
                 let me = this;
                 const {
-                    storeViewProps,
+                    recordViewProps,
                     ...storeProps
                 } = me.props as any;
                 return <Type
-                    storeView={{
+                    recordView={{
                         items:me.items,
                         limit:me.limit,
                         offset:me.offset,
@@ -266,7 +231,7 @@ export  const  withStoreView = ()=>{
                         read:(c)=>me.read(c),
                         sortFromIndex:(index)=>me.sortFromIndex(index),
                         update:(rs,c)=>me.update(rs,c),
-                        configureStoreViewProps:(b ,callback?)=>me.configureStoreViewProps(b,callback)
+                        configureRecordViewProps:(b ,callback?)=>me.configureRecordViewProps(b,callback)
                     }}
                     {...storeProps}>
                 </Type>

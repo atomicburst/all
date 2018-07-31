@@ -1,4 +1,4 @@
-import {Record} from "../../Data";
+import {Record} from "../../Record";
 import * as React from "react";
 import * as ReactPropTypes from "prop-types";
 import {FormRef} from "./Form";

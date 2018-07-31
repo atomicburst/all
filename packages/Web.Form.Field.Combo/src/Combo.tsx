@@ -9,7 +9,7 @@ import {FormRef, RecordFieldProps, WithRecordField, withRecordField} from "../..
 import withStyles from "@material-ui/core/styles/withStyles";
 import Async from 'react-promise';
 import * as ReactPropTypes from "prop-types";
-import {Record, StoreViewProps, withStoreView, WithStoreView} from "../../Data";
+import {Record, RecordViewProps, withRecordView, WithRecordView} from "../../Record";
 import TextFieldM from "@material-ui/core/TextField";
 import {TextFieldProps as TextFieldPropsM} from "@material-ui/core/TextField/TextField";
 import {RefObject} from "react";
@@ -80,12 +80,12 @@ export interface ComboFieldProps extends TextFieldPropsM {
     renderItem: (r: Record) => JSX.Element | null | false;
 }
 
-export class ComboFieldRef extends Component<ComboFieldProps & WithRecordField  &WithFocusManagerField & WithStoreView & WithStyles<typeof ComboFieldStyles>, any> {
+export class ComboFieldRef extends Component<ComboFieldProps & WithRecordField  &WithFocusManagerField & WithRecordView & WithStyles<typeof ComboFieldStyles>, any> {
     id: string;
     items = [];
     divRef: RefObject<any>
-    get storeView(){
-        return this.props.storeView
+    get recordView(){
+        return this.props.recordView
     }
     constructor(props, context) {
         super(props, context);
@@ -148,7 +148,7 @@ export class ComboFieldRef extends Component<ComboFieldProps & WithRecordField  
         this.setState(function () {
             items:[]
         })
-        return me.storeView.read({limit: 25, offset: 0, viewData: {displayFieldValue: displayFieldValue}}).catch(function (e) {
+        return me.recordView.read({limit: 25, offset: 0, viewData: {displayFieldValue: displayFieldValue}}).catch(function (e) {
             setTimeout(function () {
                 me.setState({
                     loading:false
@@ -173,7 +173,7 @@ export class ComboFieldRef extends Component<ComboFieldProps & WithRecordField  
         let me = this;
         const {
             inputRef,
-            storeView,
+            recordView,
             recordField,
             renderItem,
             onKeyDown,
@@ -222,23 +222,23 @@ export class ComboFieldRef extends Component<ComboFieldProps & WithRecordField  
                     value={inputText}
                     onKeyDown={function (e) {
                         let $event = e.nativeEvent;
-                        let indexActiveRecord = me.storeView.items.indexOf(me.state.activeRecord );
+                        let indexActiveRecord = me.recordView.items.indexOf(me.state.activeRecord );
                         if ( indexActiveRecord>-1&& me.state.activeRecord && me.state.open && $event.keyCode == keycode.codes.enter) {
                             $event.preventDefault();
                             me.setState({open: false, inputText: me.getInputText(me.state.activeRecord.getData())})
                             recordField.onChange(me.getValueField(me.state.activeRecord));
                             return;
                         } else if ($event.keyCode == keycode.codes.down) {
-                            if (me.storeView.items.length==0){
+                            if (me.recordView.items.length==0){
                                 me.search(inputText || "")
                             }
                             $event.preventDefault();
-                            let activeIndex = me.storeView.items.indexOf(me.state.activeRecord);
+                            let activeIndex = me.recordView.items.indexOf(me.state.activeRecord);
                             let activeRecord;
-                            if (activeIndex == -1 || (activeIndex + 1) == me.storeView.items.length) {
-                                activeRecord = me.storeView.items[0]
+                            if (activeIndex == -1 || (activeIndex + 1) == me.recordView.items.length) {
+                                activeRecord = me.recordView.items[0]
                             } else {
-                                activeRecord = me.storeView.items[activeIndex + 1]
+                                activeRecord = me.recordView.items[activeIndex + 1]
                             }
                             me.setState({
                                 open: true,
@@ -252,14 +252,14 @@ export class ComboFieldRef extends Component<ComboFieldProps & WithRecordField  
                             return;
                         } else if ($event.keyCode == keycode.codes.up) {
                             $event.preventDefault();
-                            let activeIndex = me.storeView.items.indexOf(me.state.activeRecord);
+                            let activeIndex = me.recordView.items.indexOf(me.state.activeRecord);
                             let activeRecord;
                             if (activeIndex == -1) {
                                 activeRecord = 0;
                             } else if (activeIndex == 0) {
-                                activeRecord = me.storeView.items[me.storeView.items.length - 1]
+                                activeRecord = me.recordView.items[me.recordView.items.length - 1]
                             } else {
-                                activeRecord = me.storeView.items[activeIndex - 1]
+                                activeRecord = me.recordView.items[activeIndex - 1]
                             }
                             me.setState({
                                 open: true,
@@ -343,7 +343,7 @@ export class ComboFieldRef extends Component<ComboFieldProps & WithRecordField  
                                     </MenuItem>
                                 }
                                 then={() => {
-                                    return (me.storeView.items).map((record, index) =>
+                                    return (me.recordView.items).map((record, index) =>
                                         <MenuItem
                                             key={record.id}
                                             id={me.id + '-' + record.id}
@@ -383,5 +383,5 @@ export class ComboFieldRef extends Component<ComboFieldProps & WithRecordField  
     }
 
 }
-export  type ComboFieldType = React.ComponentClass<Overwrite<Overwrite<Overwrite<Overwrite<Overwrite<Overwrite<ComboFieldProps,Partial<FocusManagerFieldProps>>, Partial<FocusManager>>, Partial<RecordFieldProps>>, Partial<RecordFieldProps>>, Partial<StoreViewProps>>, Partial<WithStyles<typeof ComboFieldStyles>>>>
-export const ComboField = compose( withFocusManagerField(),withStyles(ComboFieldStyles), withRecordField(), withStoreView())(ComboFieldRef) as ComboFieldType;
+export  type ComboFieldType = React.ComponentClass<Overwrite<Overwrite<Overwrite<Overwrite<Overwrite<Overwrite<ComboFieldProps,Partial<FocusManagerFieldProps>>, Partial<FocusManager>>, Partial<RecordFieldProps>>, Partial<RecordFieldProps>>, Partial<RecordViewProps>>, Partial<WithStyles<typeof ComboFieldStyles>>>>
+export const ComboField = compose( withFocusManagerField(),withStyles(ComboFieldStyles), withRecordField(), withRecordView())(ComboFieldRef) as ComboFieldType;

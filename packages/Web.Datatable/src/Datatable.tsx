@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import {withStyles} from '@material-ui/core/styles';
 import * as ReactPropTypes from 'prop-types';
 import {Overwrite, WithStyles} from "@material-ui/core";
-import {Record, StoreViewProps, withStoreView, WithStoreView} from "../../Data";
+import {Record, RecordViewProps, withRecordView, WithRecordView} from "../../Record";
 import {CSSProperties, ReactNode} from "react";
 import {SizeMe} from 'react-sizeme'
 import Paper from "@material-ui/core/Paper";
@@ -54,7 +54,7 @@ export interface DatatableProps {
         cell: (r: Record, status: { isSelected: boolean }) => React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>
     }[]
 }
-export class DatatableRef extends React.Component<WithStyles<typeof DatatableStyles> & DatatableProps & WithStoreView, any> {
+export class DatatableRef extends React.Component<WithStyles<typeof DatatableStyles> & DatatableProps & WithRecordView, any> {
     defaultColumnStyle = {
         width: '160px'
     }
@@ -70,8 +70,8 @@ export class DatatableRef extends React.Component<WithStyles<typeof DatatableSty
         this.id = ("Datatable-" + (ID++));
     }
 
-    get storeView() {
-        return this.props.storeView;
+    get recordView() {
+        return this.props.recordView;
     };
 
     static childContextTypes = {
@@ -102,8 +102,8 @@ export class DatatableRef extends React.Component<WithStyles<typeof DatatableSty
                                             columns={columns}
                                             mode={mode}
                                             rowHeight={me.rowHeight}
-                                            storeView={me.storeView}
-                                            loading={me.storeView.loading}
+                                            recordView={me.recordView}
+                                            loading={me.recordView.loading}
                                             minHeight={size.height}
                                             width={size.width}
                                             headerRowHeight={me.headerRowHeight}
@@ -123,19 +123,19 @@ export class DatatableRef extends React.Component<WithStyles<typeof DatatableSty
 
     handleChangePage = (event, page) => {
         let me = this;
-        me.storeView.read({offset: page * me.storeView.limit});
+        me.recordView.read({offset: page * me.recordView.limit});
     };
 
     handleChangeRowsPerPage = event => {
         let me = this;
-        me.storeView.read({limit: event.target.value});
+        me.recordView.read({limit: event.target.value});
     };
     sortFromIndex(dataIndex: string) {
-        return this.storeView.sortFromIndex(dataIndex);
+        return this.recordView.sortFromIndex(dataIndex);
     }
 
 }
 
 
-export  type DatatableType = React.ComponentClass<Overwrite<Overwrite<Overwrite<DatatableProps, Partial<WithRecordField>>, Partial<StoreViewProps>>, Partial<WithStyles<typeof DatatableStyles>>>>
-export const Datatable = compose(withStyles(DatatableStyles), withStoreView())(DatatableRef) as DatatableType;
+export  type DatatableType = React.ComponentClass<Overwrite<Overwrite<Overwrite<DatatableProps, Partial<WithRecordField>>, Partial<RecordViewProps>>, Partial<WithStyles<typeof DatatableStyles>>>>
+export const Datatable = compose(withStyles(DatatableStyles), withRecordView())(DatatableRef) as DatatableType;
