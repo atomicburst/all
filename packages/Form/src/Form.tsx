@@ -5,15 +5,10 @@ import {WithStyles} from "@material-ui/core";
 import * as React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 export const FormStyles = {}
-export interface  FormProviderProps {
-    formRef:(e:FormRef)=>void
-}
+export interface  FormProviderProps {}
 export class FormRef  extends Component< FormProviderProps & WithStyles<typeof FormStyles>> {
     constructor(props,contex){
         super(props,contex);
-        if (this.props.formRef){
-            this.props.formRef(this);
-        }
     }
     static childContextTypes = {
         form: ReactPropTypes.any

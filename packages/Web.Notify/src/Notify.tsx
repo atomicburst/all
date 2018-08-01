@@ -12,6 +12,7 @@ import ErrorIcon from '@material-ui/icons/Error';
 import InfoIcon from '@material-ui/icons/Info';
 import WarningIcon from '@material-ui/icons/Warning';
 import classNames from 'classnames';
+import {SnackbarProps} from "@material-ui/core/Snackbar/Snackbar";
 
 
 const NotifyStyles = theme => ({
@@ -51,10 +52,7 @@ const NotifyStyles = theme => ({
     }
 });
 
-export interface NotifyProps {
-    notifyRef: (e: NotifyRef) => void
-}
-
+export type NotifyProps =SnackbarProps &{status:NotifyStatus}& Partial<WithStyles<typeof  NotifyStyles>>
 export  type NotifyStatus = "success" | "error" | "info" | "warning"
 
 const variantIcon = {
@@ -65,71 +63,38 @@ const variantIcon = {
 };
 
 
-export class NotifyRef extends React.Component<NotifyProps & WithStyles<typeof NotifyStyles>, any> {
-    constructor(props, context) {
-        super(props, context);
-        this.state = {open: false, status: "success"};
-        let notifyRef = this.props.notifyRef || function () {
-        };
-        notifyRef(this);
-    }
-
-    open(config) {
-        if (!config .TransitionComponent) {
-            config .TransitionComponent = (props) => {
-                return <Slide {...props} direction="down"/>
+export const NotifyRef = (props:NotifyProps) => {
+    const { classes ,status ,message, autoHideDuration} = props;
+    const Icon = variantIcon[status];
+    return   <Snackbar
+        classes={{
+            root: classes.snackbar
+        }}
+        ContentProps={{
+            classes: {
+                root: classes[status]
             }
-        }
-        this.setState({
-            open: true,
-            message: config .message.toString(),
-            TransitionComponent: config .TransitionComponent,
-            status: config .status || "success",
-            duration:config .duration
-        });
-    };
-
-    close() {
-        this.setState({open: false});
-    }
-
-    render() {
-        const { classes } = this.props;
-        const status = this.state.status;
-        const Icon = variantIcon[status];
-        return   <Snackbar
-                classes={{
-                    root: classes.snackbar
-                }}
-                ContentProps={{
-                    classes: {
-                        root: classes[status]
-                    }
-                }}
-                action={[
-                    <IconButton
-                        key="close"
-                        aria-label="Close"
-                        color="inherit"
-                        className={classes.close}
-                        onClick={() => this.close()}
-                    >
-                        <IconClose />
-                    </IconButton>,
-                ]}
-                open={this.state.open}
-                autoHideDuration={this.state.duration||1000}
-                onClose={() => this.close()}
-                TransitionComponent={this.state.TransitionComponent}
-                message={
-                    <span id="client-snackbar" className={classes.message}>
+        }}
+        action={[
+            <IconButton
+                key="close"
+                aria-label="Close"
+                color="inherit"
+                className={classes.close}
+                onClick={() => this.close()}
+            >
+                <IconClose />
+            </IconButton>,
+        ]}
+        autoHideDuration={autoHideDuration||1000}
+        message={
+            <span id="client-snackbar" className={classes.message}>
                       <Icon className={classNames(classes.icon, classes.iconVariant)} />
-                        {this.state.message}
+                {message}
                  </span>
-                }
-            />
-    }
-
+        }
+        {...this.props}
+    />
 }
 
 export const Notify = withStyles(NotifyStyles)(NotifyRef);
