@@ -6,7 +6,7 @@ import { RecordFieldProps, withRecordField, WithRecordField, withFocusManagerFie
 import withStyles from "@material-ui/core/styles/withStyles";
 import {Overwrite, WithStyles} from "@material-ui/core";
 import compose from "recompose/compose";
-import {} from "../../Record/src/Record";
+import {} from "../../Data/src/Record";
 import {FocusManagerFieldProps, WithFocusManagerField} from "../../Form";
 
 export interface TextFieldProps extends TextFieldPropsM {

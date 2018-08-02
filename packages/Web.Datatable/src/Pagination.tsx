@@ -24,10 +24,10 @@ const theme = createMuiTheme({
 });
 export const Pagination = ({datatableRef, columns}: { datatableRef: DatatableRef, columns: any }) => {
     const {onClickItem, classes} = datatableRef.props;
-    let page = Math.trunc(datatableRef.recordView.offset / datatableRef.recordView.limit);
+    let page = Math.trunc(datatableRef.loadView.offset / datatableRef.loadView.limit);
     let rowsPerPageOptions = [8, 50, 100];
-    if (rowsPerPageOptions.indexOf(datatableRef.recordView.limit) == -1) {
-        rowsPerPageOptions.push(datatableRef.recordView.limit)
+    if (rowsPerPageOptions.indexOf(datatableRef.loadView.limit) == -1) {
+        rowsPerPageOptions.push(datatableRef.loadView.limit)
         rowsPerPageOptions.sort((a, b) => {
             return a - b;
         });
@@ -36,8 +36,8 @@ export const Pagination = ({datatableRef, columns}: { datatableRef: DatatableRef
         <MuiThemeProvider theme={theme}>
     <TablePagination
         component="div"
-    count={datatableRef.recordView.length}
-    rowsPerPage={datatableRef.recordView.limit}
+    count={datatableRef.loadView.length}
+    rowsPerPage={datatableRef.loadView.limit}
     page={page}
     labelDisplayedRows={({from, to, count}) => `${from}-${to} de ${count}`}
     labelRowsPerPage={"Linhas por pagina"}

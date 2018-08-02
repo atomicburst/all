@@ -169,7 +169,7 @@ export const WrapperStyles: any = theme => ({
 class WrapperRef extends React.Component<{
     classes: any,
     loading: any,
-    recordView: any,
+    loadView: any,
     width: any,
     rowHeight: any,
     mode:'infinitescroll'|'pagination'|'list'
@@ -276,7 +276,7 @@ class WrapperRef extends React.Component<{
         let me = this;
         const {
             mode,
-            recordView,
+            loadView,
             rowHeight
         } = this.props;
         if (mode!='infinitescroll')
@@ -286,11 +286,11 @@ class WrapperRef extends React.Component<{
             let position = Math.round((me.canvas.scrollTop) / rowHeight);
             let min = Math.round((me.canvas.clientHeight) / rowHeight);
             let length = Math.trunc((me.canvas.scrollHeight / rowHeight));
-            let l = Math.round(recordView.offset);
+            let l = Math.round(loadView.offset);
             if (l < 0) {
                 l = 0;
             }
-            let r = Math.round(recordView.offset + recordView.limit - (min * 2));
+            let r = Math.round(loadView.offset + loadView.limit - (min * 2));
             if (r > length) {
                 r = length;
             }
@@ -300,7 +300,7 @@ class WrapperRef extends React.Component<{
                 if (p < 0) {
                     p = 0;
                 }
-                recordView.read({offset: p, limit: min * 10});
+                loadView.read({offset: p, limit: min * 10});
             }
         }
         if (b) {
@@ -356,15 +356,15 @@ class WrapperRef extends React.Component<{
         let me = this;
 
         const {
-            recordView
+            loadView
         } = this.props;
         if (sortDirection&&sortDirection!="NONE") {
 
             let b = {};
             b[sortColumn] = sortDirection.toLowerCase();
-            recordView.read({offset: recordView.offset, sorts: [b]})
+            loadView.read({offset: loadView.offset, sorts: [b]})
         } else {
-            recordView.read({offset: recordView.offset, sorts: []})
+            loadView.read({offset: loadView.offset, sorts: []})
         }
 
     }
@@ -375,7 +375,7 @@ class WrapperRef extends React.Component<{
         const {
             classes,
             loading,
-            recordView,
+            loadView,
             rowHeight,
             minHeight,
             headerRowHeight,
@@ -385,18 +385,18 @@ class WrapperRef extends React.Component<{
             columns
         } = this.state;
 
-        let len = recordView.length;
+        let len = loadView.length;
 
         console.log(mode)
         if (mode=='pagination'){
-            len=recordView.items.length;
+            len=loadView.items.length;
         }
         let sortDirection;
         let sortColumn;
-        if (recordView.sorts&&recordView.sorts[0]){
-            for (let ii in  recordView.sorts[0]){
-                if (recordView.sorts[0][ii]){
-                    sortDirection= recordView.sorts[0][ii].toUpperCase()
+        if (loadView.sorts&&loadView.sorts[0]){
+            for (let ii in  loadView.sorts[0]){
+                if (loadView.sorts[0][ii]){
+                    sortDirection= loadView.sorts[0][ii].toUpperCase()
                 }else {
                     sortDirection= 'NONE';
                 }
@@ -445,13 +445,13 @@ class WrapperRef extends React.Component<{
                             ii =rowIdx;
                         }else {
 
-                            ii =rowIdx - recordView.offset;
+                            ii =rowIdx - loadView.offset;
                         }
 
-                        if (recordView.items[ii]) {
+                        if (loadView.items[ii]) {
                             let oo = {};
                             for (let cc of columns) {
-                                oo[cc.key] = recordView.items[ii];
+                                oo[cc.key] = loadView.items[ii];
                             }
                             return oo;
                         }

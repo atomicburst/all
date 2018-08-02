@@ -3,7 +3,7 @@ import {Component} from "react";
 import _BigCalendar ,{BigCalendarProps} from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import * as moment from "moment";
-import {Record,  RecordViewProps, WithRecordView, withRecordView} from "../../Record";
+import {Record,  LoadViewProps, WithLoadView, withLoadView} from "../../Data";
 import withStyles from "@material-ui/core/styles/withStyles";
 import HTML5Backend from 'react-dnd-html5-backend'
 import {DragDropContext, DragDropContextProvider} from 'react-dnd'
@@ -67,22 +67,22 @@ const messages = {
 
 const BigCalendar = withDragAndDrop(_BigCalendar,{backend:false});
 
-export class CalendarRef extends Component<CalendarProps & WithRecordView & WithStyles<typeof CalendarStyles>, any> {
+export class CalendarRef extends Component<CalendarProps & WithLoadView & WithStyles<typeof CalendarStyles>, any> {
     currentDate= new Date();
     currentView =_BigCalendar['Views']['WEEK'];
-    get recordView(){
-       return this.props.recordView
+    get loadView(){
+       return this.props.loadView
     }
     constructor(props, context) {
         super(props, context);
         let me = this;
         const  { dateStart , dateEnd } = me.getInterval();
-        me.recordView.configureRecordViewProps( { dateStart , dateEnd });
+        me.loadView.configureLoadViewProps( { dateStart , dateEnd });
     }
 
     readRemote(dateStart,dateEnd) {
         let me = this;
-        return me.recordView.read({offset: 0, viewData: {dateStart,dateEnd},items:[],loading:true}).catch(function (e) {
+        return me.loadView.read({offset: 0, viewData: {dateStart,dateEnd},items:[],loading:true}).catch(function (e) {
         }).then(function () {
         });
     }
@@ -127,12 +127,12 @@ export class CalendarRef extends Component<CalendarProps & WithRecordView & With
     search() {
         let me = this;
         const  { dateStart , dateEnd } = this.getInterval();
-        me.recordView.configureRecordViewProps( { dateStart , dateEnd });
+        me.loadView.configureLoadViewProps( { dateStart , dateEnd });
         me.prom = me.readRemote(dateStart,dateEnd);
     }
 
     moveEvent({event, start, end}) {
-        const events = this.recordView.items;
+        const events = this.loadView.items;
         let records=[];
         const {fieldStartDate,fieldEndDate} = this.props;
         events.map(record => {
@@ -143,13 +143,13 @@ export class CalendarRef extends Component<CalendarProps & WithRecordView & With
             }
             return record;
         });
-        this.recordView.update(records,{viewData:{op:'moveEvent'}}).then(function () {
+        this.loadView.update(records,{viewData:{op:'moveEvent'}}).then(function () {
 
         });
 
     }
     resizeEvent = (resizeType, {event, start, end}) => {
-        const events = this.recordView.items;
+        const events = this.loadView.items;
         const {fieldStartDate,fieldEndDate} = this.props;
         let records=[];
         events.map(record => {
@@ -160,7 +160,7 @@ export class CalendarRef extends Component<CalendarProps & WithRecordView & With
             }
             return record;
         });
-        this.recordView.update(records,{viewData:{op:'moveEvent'}}).then(function () {
+        this.loadView.update(records,{viewData:{op:'moveEvent'}}).then(function () {
 
         });
     }
@@ -182,7 +182,7 @@ export class CalendarRef extends Component<CalendarProps & WithRecordView & With
                     justifyContent: 'center',
                     position: 'absolute',
                     zIndex: 1000
-                }} hidden={!this.recordView.loading}>
+                }} hidden={!this.loadView.loading}>
                         <div>
                             <CircularProgress variant={'indeterminate'}/>
                         </div>
@@ -193,7 +193,7 @@ export class CalendarRef extends Component<CalendarProps & WithRecordView & With
                     selectable
                     popup
                     className={classnames("ab-calendar", classes.fitFlex)}
-                    events={this.recordView.items.map(function (r) {
+                    events={this.loadView.items.map(function (r) {
                         return{
                             start:r.get(fieldStartDate),
                             end:r.get(fieldEndDate),
@@ -247,5 +247,5 @@ export class CalendarRef extends Component<CalendarProps & WithRecordView & With
     }
 }
 
-export  type CalendarType = React.ComponentClass<Overwrite<Overwrite<CalendarProps, RecordViewProps>, Partial<WithStyles<typeof CalendarStyles>>>>
-export const Calendar = DragDropContext(HTML5Backend)(compose(withStyles(CalendarStyles), withRecordView())(CalendarRef))  as CalendarType;
+export  type CalendarType = React.ComponentClass<Overwrite<Overwrite<CalendarProps, LoadViewProps>, Partial<WithStyles<typeof CalendarStyles>>>>
+export const Calendar = DragDropContext(HTML5Backend)(compose(withStyles(CalendarStyles), withLoadView())(CalendarRef))  as CalendarType;

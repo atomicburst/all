@@ -1,6 +1,5 @@
 import * as React from "react";
 import * as ReactPropTypes from "prop-types";
-import {FormRef} from "./Form";
 export  class FocusManager{
     private fields=[];
     focusKeyCode =13;
@@ -55,12 +54,6 @@ export const withFocusManagerField= () => {
     return function <T1 extends FocusManagerFieldProps>(Type: React.ComponentClass<T1>) {
         return class  extends React.Component<T1 & WithFocusManagerField , any> {
             focusManagerDefault=new FocusManager();
-            context: {
-                form: FormRef
-            }
-            static contextTypes = {
-                form: ReactPropTypes.any
-            };
             get focusManager(){
                 return this.props.focusFieldProps&&this.props.focusFieldProps.focusManager||this.focusManagerDefault;
             }

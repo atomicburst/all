@@ -1,12 +1,12 @@
 import {Record} from "./Record";
 import * as React from "react";
-export interface  ViewDataProxyData{
+export interface  LoadViewProxyData{
     length?:number
     summary?:any
     items?:Record[],
     activeItem?:Record
 }
-export interface ViewDataUpdateConfig {
+export interface LoadViewUpdateConfig {
     items:Record[]
     viewData:any
 }
@@ -19,10 +19,10 @@ export interface ViewDataReadConfig {
 }
 let id = 1000;
 
-export  interface RecordViewProps {
-    recordViewProps:{
-        read:(config:ViewDataReadConfig)=>Promise<ViewDataProxyData>
-        update?:(config:ViewDataUpdateConfig)=>Promise<any>
+export  interface LoadViewProps {
+    loadViewProps:{
+        read:(config:ViewDataReadConfig)=>Promise<LoadViewProxyData>
+        update?:(config:LoadViewUpdateConfig)=>Promise<any>
         limit?:number
         mapItems?:any
         multSort?:boolean,
@@ -33,36 +33,36 @@ export  interface RecordViewProps {
     }
 }
 
-export class RecordViewRef<T1 extends RecordViewProps=RecordViewProps>  extends React.Component<T1,any>  {
+export class LoadViewRef<T1 extends LoadViewProps=LoadViewProps>  extends React.Component<T1,any>  {
     constructor(props,context){
         super(props,context);
         this.state={
-            recordViewProps:{
+            loadViewProps:{
                 length:0,
-                ...props.recordViewProps
+                ...props.loadViewProps
             }
         };
     }
     get length(){
-        return this.recordViewProps.length||0
+        return this.loadViewProps.length||0
     }
     get offset(){
-        return this.recordViewProps.offset||0
+        return this.loadViewProps.offset||0
     }
     get limit(){
-        return this.recordViewProps.limit||35
+        return this.loadViewProps.limit||35
     }
     get mapItems(){
-        return this.recordViewProps.mapItems
+        return this.loadViewProps.mapItems
     }
     get multSort(){
-        return this.recordViewProps.multSort
+        return this.loadViewProps.multSort
     }
     get sorts(){
-        return this.recordViewProps.sorts||[];
+        return this.loadViewProps.sorts||[];
     }
-    get recordViewProps (){
-        return this.state.recordViewProps;
+    get loadViewProps (){
+        return this.state.loadViewProps;
     }
 
     sortFromIndex(dataIndex: string) {
@@ -76,11 +76,11 @@ export class RecordViewRef<T1 extends RecordViewProps=RecordViewProps>  extends 
     }
 
     get loading (){
-        return this.recordViewProps.loading;
+        return this.loadViewProps.loading;
     }
     get items (){
-        if (this.recordViewProps.items&&this.recordViewProps.items.length){
-            return  this.recordViewProps.items;
+        if (this.loadViewProps.items&&this.loadViewProps.items.length){
+            return  this.loadViewProps.items;
         }
         return []
     }
@@ -91,8 +91,8 @@ export class RecordViewRef<T1 extends RecordViewProps=RecordViewProps>  extends 
             ...(c.viewData||{})
         }
 
-        return this.props.recordViewProps.update({items:items,viewData:viewData}).then(function (r) {
-            if (me.props.recordViewProps.loadAfterUpdate){
+        return this.props.loadViewProps.update({items:items,viewData:viewData}).then(function (r) {
+            if (me.props.loadViewProps.loadAfterUpdate){
                 return me.load();
             }else {
                 return  Promise.resolve();
@@ -106,15 +106,15 @@ export class RecordViewRef<T1 extends RecordViewProps=RecordViewProps>  extends 
     }
     clear(){
         let me = this;
-        me.configureRecordViewProps({
+        me.configureLoadViewProps({
             items:[]
         })
     }
-    configureRecordViewProps(b ,callback?){
+    configureLoadViewProps(b ,callback?){
         let me = this;
         let ff = {
-            recordViewProps:{
-                ...me.state.recordViewProps,
+            loadViewProps:{
+                ...me.state.loadViewProps,
                 ...b
             }
         }
@@ -150,13 +150,13 @@ export class RecordViewRef<T1 extends RecordViewProps=RecordViewProps>  extends 
             me.lastConfig=null;
         }
         me.lastConfig = c;
-        me.configureRecordViewProps({...config,viewData:c.viewData,loading:true});
-        return this.props.recordViewProps.read(c).then(function (r) {
+        me.configureLoadViewProps({...config,viewData:c.viewData,loading:true});
+        return this.props.loadViewProps.read(c).then(function (r) {
             let items = r.items||[];
             if (me.mapItems){
                 items =  items.map(me.mapItems);
             }
-            me.configureRecordViewProps({
+            me.configureLoadViewProps({
                 length: r.length||items.length,
                 items: items,
                 loading:false,
@@ -167,7 +167,7 @@ export class RecordViewRef<T1 extends RecordViewProps=RecordViewProps>  extends 
             return  Promise.resolve()
         }).catch(function () {
             if (me.lastConfig==c){
-                me.configureRecordViewProps({
+                me.configureLoadViewProps({
                     loading:false
                 });
             }
@@ -182,23 +182,23 @@ export class RecordViewRef<T1 extends RecordViewProps=RecordViewProps>  extends 
         let props = this.props as any;
         let nextProps = _nextProps as any;
         let b =false;
-        if (props.recordViewProps.limit!=nextProps.recordViewProps.limit){
+        if (props.loadViewProps.limit!=nextProps.loadViewProps.limit){
             b = true;
         }
-        if (props.recordViewProps.sorts!=nextProps.recordViewProps.sorts){
+        if (props.loadViewProps.sorts!=nextProps.loadViewProps.sorts){
             b = true;
         }
-        if (props.recordViewProps.loadAfterUpdate!=nextProps.recordViewProps.loadAfterUpdate){
+        if (props.loadViewProps.loadAfterUpdate!=nextProps.loadViewProps.loadAfterUpdate){
             b = true;
         }
         if (b) {
-            me.configureRecordViewProps(nextProps.recordViewProps);
+            me.configureLoadViewProps(nextProps.loadViewProps);
         }
     }
 }
-export interface  WithRecordView  {
-   recordView:{
-       configureRecordViewProps:(d)=>void;
+export interface  WithLoadView  {
+   loadView:{
+       configureLoadViewProps:(d)=>void;
        limit:number
        offset:number
        loading:boolean
@@ -211,17 +211,17 @@ export interface  WithRecordView  {
 }
 
 
-export  const  withRecordView = ()=>{
-    return function<T1 extends RecordViewProps>(Type:React.ComponentClass<T1 & WithRecordView>) {
-        return class extends RecordViewRef<T1> {
+export  const  withLoadView = ()=>{
+    return function<T1 extends LoadViewProps>(Type:React.ComponentClass<T1 & WithLoadView>) {
+        return class extends LoadViewRef<T1> {
             render(){
                 let me = this;
                 const {
-                    recordViewProps,
+                    loadViewProps,
                     ...storeProps
                 } = me.props as any;
                 return <Type
-                    recordView={{
+                    loadView={{
                         items:me.items,
                         limit:me.limit,
                         offset:me.offset,
@@ -231,7 +231,7 @@ export  const  withRecordView = ()=>{
                         read:(c)=>me.read(c),
                         sortFromIndex:(index)=>me.sortFromIndex(index),
                         update:(rs,c)=>me.update(rs,c),
-                        configureRecordViewProps:(b ,callback?)=>me.configureRecordViewProps(b,callback)
+                        configureLoadViewProps:(b ,callback?)=>me.configureLoadViewProps(b,callback)
                     }}
                     {...storeProps}>
                 </Type>

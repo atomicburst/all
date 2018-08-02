@@ -81,7 +81,7 @@ export const NotifyRef = (props:NotifyProps) => {
                 aria-label="Close"
                 color="inherit"
                 className={classes.close}
-                onClick={() => this.close()}
+                onClick={(e) => props.onClose(e,message as any)}
             >
                 <IconClose />
             </IconButton>,
