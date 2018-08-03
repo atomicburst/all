@@ -179,8 +179,12 @@ export class LoadViewRef<T1 extends LoadViewProps=LoadViewProps>  extends React.
     }
     componentWillReceiveProps(_nextProps) {
         let me = this;
+        console.log("dfgsdgsdg")
         let props = this.props as any;
         let nextProps = _nextProps as any;
+        if (!nextProps.loadViewProps){
+            return
+        }
         let b =false;
         if (props.loadViewProps.limit!=nextProps.loadViewProps.limit){
             b = true;
@@ -191,6 +195,10 @@ export class LoadViewRef<T1 extends LoadViewProps=LoadViewProps>  extends React.
         if (props.loadViewProps.loadAfterUpdate!=nextProps.loadViewProps.loadAfterUpdate){
             b = true;
         }
+        if (props.loadViewProps.loadVersion!=nextProps.loadViewProps.loadVersion){
+           console.log(nextProps.loadViewProps.loadVersion)
+        }
+
         if (b) {
             me.configureLoadViewProps(nextProps.loadViewProps);
         }
