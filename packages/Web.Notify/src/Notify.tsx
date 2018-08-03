@@ -52,7 +52,13 @@ const NotifyStyles = theme => ({
     }
 });
 
-export type NotifyProps =SnackbarProps &{status:NotifyStatus}& Partial<WithStyles<typeof  NotifyStyles>>
+export type NotifyProps ={
+    status:NotifyStatus
+    message:any
+    open:boolean
+    onClose?:(e:any,n:any)=>void
+    autoHideDuration?:number
+}& Partial<WithStyles<typeof  NotifyStyles>>
 export  type NotifyStatus = "success" | "error" | "info" | "warning"
 
 const variantIcon = {
@@ -64,9 +70,10 @@ const variantIcon = {
 
 
 export const NotifyRef = (props:NotifyProps) => {
-    const { classes ,status ,message, autoHideDuration} = props;
+    const { classes ,status ,message, autoHideDuration,open} = props;
     const Icon = variantIcon[status];
     return   <Snackbar
+        open={open}
         classes={{
             root: classes.snackbar
         }}
@@ -75,13 +82,14 @@ export const NotifyRef = (props:NotifyProps) => {
                 root: classes[status]
             }
         }}
+        onClose={(e,m)=>props.onClose(e,m)}
         action={[
             <IconButton
                 key="close"
                 aria-label="Close"
                 color="inherit"
                 className={classes.close}
-                onClick={(e) => props.onClose(e,message as any)}
+                onClick={(e) => props.onClose(e,message)}
             >
                 <IconClose />
             </IconButton>,
@@ -93,7 +101,6 @@ export const NotifyRef = (props:NotifyProps) => {
                 {message}
                  </span>
         }
-        {...this.props}
     />
 }
 

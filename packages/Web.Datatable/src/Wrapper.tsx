@@ -387,7 +387,6 @@ class WrapperRef extends React.Component<{
 
         let len = loadView.length;
 
-        console.log(mode)
         if (mode=='pagination'){
             len=loadView.items.length;
         }

@@ -86,7 +86,6 @@ export class DateFieldRef extends Component<DateFieldProps & WithRecordField & W
     constructor(props, context) {
         super(props, context);
         let me = this;
-        console.log(me)
         if (me.props.datePickerRef) {
             me.props.datePickerRef(this);
         }
