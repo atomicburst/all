@@ -5,6 +5,7 @@ import * as ReactDataGrid from 'react-data-grid';
 import CircularProgress from "@material-ui/core/CircularProgress";
 import {SizeMe} from 'react-sizeme'
 import withStyles from "@material-ui/core/styles/withStyles";
+import {Record} from "../../Data";
 const DraggableContainer = P.DraggableHeader.DraggableContainer;
 let ID = 1000;
 
@@ -176,7 +177,7 @@ class WrapperRef extends React.Component<{
     minHeight: any,
     columns: any,
     headerRowHeight: any
-
+    onRowDoubleClick?: (r:Record) => void
 }, any> {
     private loadingRef: React.RefObject<any>;
 
@@ -377,6 +378,7 @@ class WrapperRef extends React.Component<{
             loading,
             loadView,
             rowHeight,
+            onRowDoubleClick,
             minHeight,
             headerRowHeight,
             mode
@@ -426,11 +428,17 @@ class WrapperRef extends React.Component<{
                     me.onHeaderDrop(source, target);
                 }}>
                 <ReactDataGrid
+
+
                     onColumnResize={(index: number, width: number) => {
                         columns[index]['width'] = width;
                         this.setState({
                             columns: columns
                         });
+                    }}
+
+                    onRowDoubleClick={(rowIdx : number, row : object)=>{
+                        onRowDoubleClick(row['_record']);
                     }}
                     sortDirection={sortDirection}
                     sortColumn={sortColumn}
@@ -451,6 +459,7 @@ class WrapperRef extends React.Component<{
                             let oo = {};
                             for (let cc of columns) {
                                 oo[cc.key] = loadView.items[ii];
+                                oo['_record'] = loadView.items[ii];
                             }
                             return oo;
                         }

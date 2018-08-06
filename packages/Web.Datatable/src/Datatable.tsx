@@ -42,7 +42,7 @@ export const DatatableStyles: any = theme => ({
 export interface DatatableProps {
     className?: string;
     mode:'infinitescroll'|'pagination'|'list'
-    onClickItem?: (record: Record) => void
+    onRowDoubleClick?: (r:Record) => void
     columns: {
         dataIndex: string,
         head: ReactNode,
@@ -89,7 +89,7 @@ export class DatatableRef extends React.Component<WithStyles<typeof DatatableSty
 
     render() {
         const me = this;
-        const {classes,mode,columns} = this.props;
+        const {classes,mode,columns,onRowDoubleClick} = this.props;
         return (
             <Paper className={classNames(classes.root, this.props.className)}>
                 <div className={classes.tableWrapper}>
@@ -101,6 +101,7 @@ export class DatatableRef extends React.Component<WithStyles<typeof DatatableSty
                                         return <Wrapper
                                             columns={columns}
                                             mode={mode}
+                                            onRowDoubleClick={onRowDoubleClick}
                                             rowHeight={me.rowHeight}
                                             loadView={me.loadView}
                                             loading={me.loadView.loading}

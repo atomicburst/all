@@ -23,7 +23,7 @@ const theme = createMuiTheme({
     }
 });
 export const Pagination = ({datatableRef, columns}: { datatableRef: DatatableRef, columns: any }) => {
-    const {onClickItem, classes} = datatableRef.props;
+    const {} = datatableRef.props;
     let page = Math.trunc(datatableRef.loadView.offset / datatableRef.loadView.limit);
     let rowsPerPageOptions = [8, 50, 100];
     if (rowsPerPageOptions.indexOf(datatableRef.loadView.limit) == -1) {

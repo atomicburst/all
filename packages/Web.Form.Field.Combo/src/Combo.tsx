@@ -383,5 +383,5 @@ export class ComboFieldRef extends Component<ComboFieldProps & WithRecordField  
     }
 
 }
-export  type ComboFieldType = React.ComponentClass<Overwrite<Overwrite<Overwrite<Overwrite<Overwrite<Overwrite<ComboFieldProps,Partial<FocusManagerFieldProps>>, Partial<FocusManager>>, Partial<RecordFieldProps>>, Partial<RecordFieldProps>>, Partial<LoadViewProps>>, Partial<WithStyles<typeof ComboFieldStyles>>>>
+export  type ComboFieldType = React.ComponentClass<Overwrite<Overwrite<Overwrite<Overwrite<Overwrite<Overwrite<ComboFieldProps,Partial<FocusManagerFieldProps>>, Partial<FocusManager>>, Partial<RecordFieldProps>>, Partial<RecordFieldProps>>, LoadViewProps>, Partial<WithStyles<typeof ComboFieldStyles>>>>
 export const ComboField = compose( withFocusManagerField(),withStyles(ComboFieldStyles), withRecordField(), withLoadView())(ComboFieldRef) as ComboFieldType;
