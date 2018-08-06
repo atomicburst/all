@@ -43,6 +43,13 @@ export class LoadViewRef<T1 extends LoadViewProps=LoadViewProps>  extends React.
             }
         };
     }
+    componentDidMount(){
+        let  props =  this.props;
+        console.log(props.loadViewProps)
+        if (  props.loadViewProps && props.loadViewProps.loadVersion>-1){
+            this.read();
+        }
+    }
     get length(){
         return this.loadViewProps.length||0
     }
@@ -195,8 +202,10 @@ export class LoadViewRef<T1 extends LoadViewProps=LoadViewProps>  extends React.
         if (props.loadViewProps.loadAfterUpdate!=nextProps.loadViewProps.loadAfterUpdate){
             b = true;
         }
+
+
         if (props.loadViewProps.loadVersion!=nextProps.loadViewProps.loadVersion){
-           console.log(nextProps.loadViewProps.loadVersion)
+           this.read()
         }
 
         if (b) {
