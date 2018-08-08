@@ -191,8 +191,7 @@ export class DateFieldRef extends Component<DateFieldProps & WithRecordField & W
         if (e.nativeEvent.relatedTarget) {
             let relatedTarget = e.nativeEvent.relatedTarget;
             if (relatedTarget.parentElement == me.divRef.current) {
-                if (me.input)
-                me.input.inputElement.focus();
+                me.focus()
                 return;
             }
         }
