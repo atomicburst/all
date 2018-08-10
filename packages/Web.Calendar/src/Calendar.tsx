@@ -7,12 +7,10 @@ import {Record,  LoadViewProps, WithLoadView, withLoadView} from "../../Data";
 import withStyles from "@material-ui/core/styles/withStyles";
 import HTML5Backend from 'react-dnd-html5-backend'
 import {DragDropContext, DragDropContextProvider} from 'react-dnd'
-import { DragDropManager } from 'dnd-core';
 
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css'
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
 import {Overwrite, WithStyles} from "@material-ui/core";
-import * as propTypes from "prop-types";
 import classnames from "classnames";
 import compose from "recompose/compose";
 import "./Calendar.css";
@@ -24,7 +22,13 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 _BigCalendar['setLocalizer'](_BigCalendar['momentLocalizer'](moment))
 // console.log(_BigCalendar['Views'])
 // let allViews = Object.keys(_BigCalendar['Views']).map(k => (_BigCalendar['Views'][k]));
-
+export interface CalendarProps extends  BigCalendarProps {
+    fieldStartDate:string;
+    fieldEndDate:string;
+    fieldId:string;
+    fieldTitle:string;
+    fieldDesc:string;
+}
 export const CalendarStyles = theme => ({
     calendar:{
         '& .rbc-show-more': {
@@ -168,9 +172,9 @@ export class CalendarRef extends Component<CalendarProps & WithLoadView & WithSt
             <div className={classnames("ab-calendar",className, classes.fitFlex, classes.calendar)}>
                 <div style={{
                     background: '#00000030',
-                    height: 'calc( 100% - 90px)',
+                    height: 'calc( 100% - 30px)',
                     width: '100%',
-                    top: '90px',
+                    top: '30px',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
@@ -243,52 +247,5 @@ export class CalendarRef extends Component<CalendarProps & WithLoadView & WithSt
     }
 }
 
-export  type CalendarProps = {
-    fieldStartDate:string;
-    fieldEndDate:string;
-    fieldId:string;
-    fieldTitle:string;
-    fieldDesc:string;
-}& BigCalendarProps&LoadViewProps&Partial<WithStyles<typeof CalendarStyles>>
-
-
-
-
-
-
-
-
-
-
-export const _Calendar = compose(withStyles(CalendarStyles), withLoadView())(CalendarRef)
-
-
-
-let defaultManager;
-function getDefaultManager() {
-    if (!defaultManager) {
-        defaultManager = new DragDropManager(HTML5Backend);
-    }
-    return defaultManager;
-}
-
-export const Calendar = ( class extends React.Component<CalendarProps> {
-    static contextTypes = {
-        dragDropManager: propTypes.object.isRequired
-    };
-
-    static childContextTypes = {
-        dragDropManager: propTypes.object.isRequired
-    };
-    context:any
-    getChildContext() {
-        console.log(this.context.dragDropManager )
-        return {
-            dragDropManager: this.context.dragDropManager || getDefaultManager()
-        };
-    }
-
-    render() {
-        return <_Calendar {...this.props} />
-    }
-} ) as React.ComponentClass<CalendarProps>
+export  type CalendarType = React.ComponentClass<Overwrite<Overwrite<CalendarProps, LoadViewProps>, Partial<WithStyles<typeof CalendarStyles>>>>
+export const Calendar = DragDropContext(HTML5Backend)(compose(withStyles(CalendarStyles), withLoadView())(CalendarRef))  as CalendarType;

@@ -203,7 +203,7 @@ class WrapperRef extends React.Component<{
             _columns.push({
                 key: c.dataIndex,
                 width: (c.width*m)||(100*m),
-                draggable: c.draggable,
+                // draggable: c.draggable,
                 resizable: c.resizable,
                 sortable:  c.sortable,
                 name:  c.head,
@@ -423,10 +423,10 @@ class WrapperRef extends React.Component<{
                     <CircularProgress variant={'indeterminate'}/>
                 </div>
             </div>
-            <DraggableContainer
-                onHeaderDrop={(source, target) => {
-                    me.onHeaderDrop(source, target);
-                }}>
+            {/*<DraggableContainer*/}
+                {/*onHeaderDrop={(source, target) => {*/}
+                    {/*me.onHeaderDrop(source, target);*/}
+                {/*}}>*/}
                 <ReactDataGrid
 
 
@@ -469,7 +469,7 @@ class WrapperRef extends React.Component<{
                     headerRowHeight={headerRowHeight}
                 />
 
-            </DraggableContainer>
+            {/*</DraggableContainer>*/}
         </div>
     }
 }
